@@ -1,0 +1,4 @@
+@"
+artifact-reader-key.json
+target/
+"@ | Out-File -Encoding utf8 .gitignore
