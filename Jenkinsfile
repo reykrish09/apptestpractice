@@ -54,6 +54,20 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy to GKE') {
+            steps {
+                sh '''
+                kubectl set image deployment/reyankrish-app \
+                  reyankrish-app=us-east1-docker.pkg.dev/project-016ea2d9-4ffd-47c6-9ce/reyankrish-repo/reyankrish-app:${BUILD_NUMBER} \
+                  -n demo
+
+                kubectl rollout status deployment/reyankrish-app \
+                  -n demo \
+                  --timeout=180s
+                '''
+            }
+        }
     }
 
     post {
