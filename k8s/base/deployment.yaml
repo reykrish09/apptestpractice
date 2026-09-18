@@ -1,5 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: reyankrish-app
   namespace: demo
@@ -12,10 +12,10 @@ spec:
       app: reyankrish-app
 
   strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 0
-      maxUnavailable: 1
+    blueGreen:
+      activeService: reyankrish-service
+      previewService: reyankrish-preview
+      autoPromotionEnabled: false
 
   template:
     metadata:
