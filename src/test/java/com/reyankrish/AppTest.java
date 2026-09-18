@@ -66,10 +66,8 @@ class AppTest {
         HttpServer server = App.createServer(0);
         server.start();
 
-        try {
+        try (HttpClient client = HttpClient.newHttpClient()) {
             int port = server.getAddress().getPort();
-
-            HttpClient client = HttpClient.newHttpClient();
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI("http://localhost:" + port + "/"))
