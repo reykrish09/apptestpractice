@@ -1,15 +1,22 @@
 package com.reyankrish;
 
 import com.sun.net.httpserver.HttpServer;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
 
 public class App {
 
-    public static String getHtml() {
-        return """
+    private static final Logger LOGGER =
+            Logger.getLogger(App.class.getName());
+
+    private static final String STARTUP_MESSAGE =
+            "Reyansh application started on port 8080";
+
+    private static final String HTML = """
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -121,18 +128,20 @@ public class App {
             </body>
             </html>
             """;
+
+    public static String getHtml() {
+        return HTML;
     }
 
     public static String getStartupMessage() {
-        return "Reyansh application started on port 8080";
+        return STARTUP_MESSAGE;
     }
 
     public static HttpServer createServer(int port) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
         server.createContext("/", exchange -> {
-            String html = getHtml();
-            byte[] response = html.getBytes(StandardCharsets.UTF_8);
+            byte[] response = HTML.getBytes(StandardCharsets.UTF_8);
 
             exchange.getResponseHeaders().set(
                     "Content-Type",
@@ -158,6 +167,6 @@ public class App {
 
     public static void main(String[] args) throws IOException {
         startServer(8080);
-        System.out.println(getStartupMessage());
+        LOGGER.info(STARTUP_MESSAGE);
     }
 }
