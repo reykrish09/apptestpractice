@@ -36,6 +36,24 @@ pipeline {
                 sh 'ls -l target'
             }
         }
+
+        stage('Docker Build') {
+            steps {
+                sh '''
+                docker build \
+                  -t us-east1-docker.pkg.dev/project-016ea2d9-4ffd-47c6-9ce/reyankrish-repo/reyankrish-app:${BUILD_NUMBER} .
+                '''
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                sh '''
+                docker push \
+                  us-east1-docker.pkg.dev/project-016ea2d9-4ffd-47c6-9ce/reyankrish-repo/reyankrish-app:${BUILD_NUMBER}
+                '''
+            }
+        }
     }
 
     post {
