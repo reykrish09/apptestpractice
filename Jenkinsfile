@@ -15,6 +15,18 @@ pipeline {
             }
         }
 
+        stage('Set Image Tag') {
+            steps {
+                script {
+                    env.GIT_SHORT_SHA = sh(
+                        script: 'git rev-parse --short HEAD',
+                        returnStdout: true
+                    ).trim()
+                }
+                echo "Image tag: ${env.GIT_SHORT_SHA}"
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
@@ -41,7 +53,7 @@ pipeline {
             steps {
                 sh '''
                 docker build \
-                  -t us-east1-docker.pkg.dev/project-016ea2d9-4ffd-47c6-9ce/reyankrish-repo/reyankrish-app:${BUILD_NUMBER} .
+                  -t us-east1-docker.pkg.dev/project-016ea2d9-4ffd-47c6-9ce/reyankrish-repo/reyankrish-app:${GIT_SHORT_SHA} .
                 '''
             }
         }
@@ -50,7 +62,7 @@ pipeline {
             steps {
                 sh '''
                 docker push \
-                  us-east1-docker.pkg.dev/project-016ea2d9-4ffd-47c6-9ce/reyankrish-repo/reyankrish-app:${BUILD_NUMBER}
+                  us-east1-docker.pkg.dev/project-016ea2d9-4ffd-47c6-9ce/reyankrish-repo/reyankrish-app:${GIT_SHORT_SHA}
                 '''
             }
         }
@@ -59,7 +71,7 @@ pipeline {
             steps {
                 sh '''
                 kubectl set image deployment/reyankrish-app \
-                  reyankrish-app=us-east1-docker.pkg.dev/project-016ea2d9-4ffd-47c6-9ce/reyankrish-repo/reyankrish-app:${BUILD_NUMBER} \
+                  reyankrish-app=us-east1-docker.pkg.dev/project-016ea2d9-4ffd-47c6-9ce/reyankrish-repo/reyankrish-app:${GIT_SHORT_SHA} \
                   -n demo
 
                 kubectl rollout status deployment/reyankrish-app \
