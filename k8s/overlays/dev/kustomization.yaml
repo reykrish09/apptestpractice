@@ -6,4 +6,4 @@ resources:
 
 images:
 - name: us-east1-docker.pkg.dev/project-016ea2d9-4ffd-47c6-9ce/reyankrish-repo/reyankrish-app
-  newTag: 993b99d
+  newTag: NEW_SHA
