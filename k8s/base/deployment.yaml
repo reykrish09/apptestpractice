@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reyankrish-app
+  namespace: demo
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: reyankrish-app
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+
+  template:
+    metadata:
+      labels:
+        app: reyankrish-app
+
+    spec:
+      containers:
+      - name: reyankrish-app
+        image: us-east1-docker.pkg.dev/project-016ea2d9-4ffd-47c6-9ce/reyankrish-repo/reyankrish-app:993b99d
+
+        ports:
+        - containerPort: 8080
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
