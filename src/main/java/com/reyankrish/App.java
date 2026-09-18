@@ -123,14 +123,15 @@ public class App {
             """;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static String getStartupMessage() {
+        return "Reyansh application started on port 8080";
+    }
 
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+    public static HttpServer createServer(int port) throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
         server.createContext("/", exchange -> {
-
             String html = getHtml();
-
             byte[] response = html.getBytes(StandardCharsets.UTF_8);
 
             exchange.getResponseHeaders().set(
@@ -146,8 +147,17 @@ public class App {
         });
 
         server.setExecutor(null);
-        server.start();
+        return server;
+    }
 
-        System.out.println("Reyansh application started on port 8080");
+    public static HttpServer startServer(int port) throws IOException {
+        HttpServer server = createServer(port);
+        server.start();
+        return server;
+    }
+
+    public static void main(String[] args) throws IOException {
+        startServer(8080);
+        System.out.println(getStartupMessage());
     }
 }
