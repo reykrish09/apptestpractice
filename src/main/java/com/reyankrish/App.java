@@ -92,7 +92,7 @@ public class App {
                     <p>Welcome to the Reyansh Good Boy Program</p>
 
                     <div class="card">
-                        <h2>About Reyansh</h2>
+                        <h2>About Reyansh krishna</h2>
                         <p><strong>Name:</strong> Reyansh</p>
                         <p><strong>Location:</strong> USA 🇺🇸</p>
                         <p><strong>Status:</strong> Happy, Smart and Awesome!</p>
