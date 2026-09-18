@@ -22,7 +22,7 @@ public class App {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Reyansh - Good Boy Program</title>
+                <title>Reyansh krishna - Good Boy Program</title>
 
                 <style>
                     body {
@@ -87,13 +87,13 @@ public class App {
 
                 <div class="container">
 
-                    <h1>Reyansh is a Good Boy Today!</h1>
+                    <h1>Reyansh krishna is a Good Boy Today!</h1>
 
                     <p>Welcome to the Reyansh Good Boy Program</p>
 
                     <div class="card">
                         <h2>About Reyansh krishna</h2>
-                        <p><strong>Name:</strong> Reyansh</p>
+                        <p><strong>Name:</strong> Reyansh krishna</p>
                         <p><strong>Location:</strong> USA 🇺🇸</p>
                         <p><strong>Status:</strong> Happy, Smart and Awesome!</p>
                     </div>
