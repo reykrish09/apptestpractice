@@ -62,3 +62,4 @@ steps:
 
     echo "Pushed $IMAGE"
   displayName: 'Build and Push Docker Image'
+  
