@@ -4,6 +4,14 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  Azure.WorkloadIdentity.Connection: 'azure-wif-for-gcp'
+  GoogleCloud.WorkloadIdentity.ProjectNumber: '635724860143'
+  GoogleCloud.WorkloadIdentity.Pool: 'azure-devops-pool'
+  GoogleCloud.WorkloadIdentity.Provider: 'azure-devops-provider'
+  GoogleCloud.WorkloadIdentity.ServiceAccount: 'azure-devops-artifact@project-016ea2d9-4ffd-47c6-9ce.iam.gserviceaccount.com'
+  GOOGLE_APPLICATION_CREDENTIALS: '$(Pipeline.Workspace)/.workload_identity.wlconfig'
+
 steps:
 - task: JavaToolInstaller@0
   inputs:
@@ -25,3 +33,32 @@ steps:
   inputs:
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/target/site/jacoco/jacoco.xml'
   condition: succeededOrFailed()
+
+- task: AzureCLI@2
+  displayName: 'Authenticate to Google Cloud using WIF'
+  inputs:
+    connectedServiceNameARM: '$(Azure.WorkloadIdentity.Connection)'
+    addSpnToEnvironment: true
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      echo "$idToken" > "$(Pipeline.Workspace)/azure-oidc-token"
+
+      gcloud iam workload-identity-pools create-cred-config \
+        "projects/$(GoogleCloud.WorkloadIdentity.ProjectNumber)/locations/global/workloadIdentityPools/$(GoogleCloud.WorkloadIdentity.Pool)/providers/$(GoogleCloud.WorkloadIdentity.Provider)" \
+        --service-account="$(GoogleCloud.WorkloadIdentity.ServiceAccount)" \
+        --credential-source-file="$(Pipeline.Workspace)/azure-oidc-token" \
+        --output-file="$(GOOGLE_APPLICATION_CREDENTIALS)"
+
+      gcloud auth login --cred-file="$(GOOGLE_APPLICATION_CREDENTIALS)"
+      gcloud auth configure-docker us-east1-docker.pkg.dev --quiet
+
+- bash: |
+    SHORT_SHA=$(echo "$(Build.SourceVersion)" | cut -c1-7)
+    IMAGE="us-east1-docker.pkg.dev/project-016ea2d9-4ffd-47c6-9ce/reyankrish-repo/reyankrish-app:$SHORT_SHA"
+
+    docker build -t "$IMAGE" .
+    docker push "$IMAGE"
+
+    echo "Pushed $IMAGE"
+  displayName: 'Build and Push Docker Image'
